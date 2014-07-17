@@ -29,5 +29,8 @@
     "bower_components",
     "tests",
     "test"
-  ]
+  ],
+  "dependencies": {
+    "jsonpClient": "git@gitlab.ftven.net:player/jsonpclient.git"
+  }
 }
