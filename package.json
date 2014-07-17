@@ -20,7 +20,9 @@
     },
     "devDependencies": {
         "bower": "*",
-        "mocha-phantomjs": "*"
+        "mocha-phantomjs": "*",
+        "node-hooks": "*",
+        "dont-commit-conflicts.hks": "0.0.0"
     },
     "directories": {
         "test": "test"
