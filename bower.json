@@ -1,0 +1,33 @@
+{
+  "name": "jqp-bootstrap",
+  "version": "0.0.0",
+  "description": "A JS bootstrap for JQP",
+  "authors": [
+    "FTVEN"
+  ],
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "keywords": [
+    "JQP",
+    "bootstrap"
+  ],
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://gitlab.ftven.net/player/jqp-bootstrap",
+  "main": "bootstrap.js",
+  "devDependencies": {
+    "requirejs-bower": "*",
+    "mocha": "*",
+    "chai": "*",
+    "sinonjs": "*"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "tests",
+    "test"
+  ]
+}
