@@ -92,24 +92,52 @@
 
                 this._callbacks = [callback];
 
+                this.requestStaticmd5Url(null, function(error, jqpUrl) {
+                    if (error) {
+                        return this._onloadFinished(error);
+                    }
+
+                    jsonpClient.loadScript(jqpUrl, function(error) {
+                        if (error) {
+                            return this._onloadFinished(new Error('jqp load: ' + error.message));
+                        }
+
+                        this._onloadFinished();
+                    }.bind(this));
+                }.bind(this));
+            },
+
+            requestStaticmd5Url: function requestStaticmd5Url(options, callback) {
+                var staticId = this.staticId;
+                var staticMd5Url = this.staticMd5Url;
+
+                if (options) {
+                    if (options.staticId) {
+                        staticId = options.staticId;
+                    }
+
+                    if (options.staticMd5Url) {
+                        if (options.staticMd5Url in staticMd5Urls) {
+                            staticMd5Url = staticMd5Urls[options.staticMd5Url];
+                        }
+                        else {
+                            staticMd5Url = options.staticMd5Url;
+                        }
+                    }
+                }
+
                 jsonpClient.get(
-                    this.staticMd5Url.replace('{{ID}}', this.staticId),
+                    staticMd5Url.replace('{{ID}}', staticId),
                     function(error, data) {
                         if (error) {
-                            return this._onloadFinished('staticMd5 load: ' + error);
+                            return callback(new Error('staticMd5 load: ' + error));
                         }
 
                         if (!data.result) {
-                            return this._onloadFinished('invalid staticMd5 result');
+                            return callback(new Error('invalid staticMd5 result'));
                         }
 
-                        jsonpClient.loadScript(data.result, function(error) {
-                            if (error) {
-                                return this._onloadFinished('jqp load: ' + error.message);
-                            }
-
-                            this._onloadFinished();
-                        }.bind(this));
+                        callback(null, data.result);
                     }.bind(this)
                 );
             },
@@ -129,9 +157,6 @@
 
                 if (!error) {
                     this._loaded = true;
-                }
-                else {
-                    error = new Error(error);
                 }
 
                 this._callbacks.forEach(function(callback) {
