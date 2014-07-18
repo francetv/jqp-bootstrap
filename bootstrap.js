@@ -5,7 +5,7 @@
             prod: 'http://webservices.francetelevisions.fr/assets/staticmd5/getUrl?callback={{CALLBACK_NAME}}&id={{ID}}',
             preprod: 'http://webservices.ftv-preprod.fr/assets/staticmd5/getUrl?callback={{CALLBACK_NAME}}&id={{ID}}',
             dev: 'http://player.ftven.net/staticmd5/url/{{ID}}',
-            local: 'http://0.0.0.O:8090/staticmd5/url/{{ID}}'
+            local: 'http://0.0.0.0:8090/staticmd5/url/{{ID}}'
         };
 
         return {
@@ -43,12 +43,14 @@
                         requestList,
 
                         // insert null as callback's first argument (error)
-                        callback.bind(null, null)
+                        callback
                     );
                 }.bind(this));
             },
 
             load: function load(options, callback) {
+                options = this._getOptions(options);
+
                 if (this._loaded) {
                     if (!this._matchOptions(options)) {
                         return callback(new Error('Another JQP already loaded'));
@@ -65,29 +67,12 @@
 
                 this._loading = true;
 
-                if (typeof options === 'string') {
-                    if (!/^jquery\.player\.(.+\.)?js$/.test(options)) {
-                        options = this._makeStaticId(options);
-                    }
-
-                    this.staticId = options;
+                if (options.staticId) {
+                    this.staticId = options.staticId;
                 }
-                else if (options) {
-                    if (options.buildId) {
-                        this.staticId = this._makeStaticId(options.buildId);
-                    }
-                    else if (options.staticId) {
-                        this.staticId = options.staticId;
-                    }
 
-                    if (options.staticMd5Url) {
-                        if (options.staticMd5Url in staticMd5Urls) {
-                            this.staticMd5Url = staticMd5Urls[options.staticMd5Url];
-                        }
-                        else {
-                            this.staticMd5Url = options.staticMd5Url;
-                        }
-                    }
+                if (options.staticMd5Url) {
+                    this.staticMd5Url = options.staticMd5Url;
                 }
 
                 this._callbacks = [callback];
@@ -97,7 +82,12 @@
                         return this._onloadFinished(error);
                     }
 
+                    var backedupDefine = global.define;
+                    global.define = undefined;
+
                     jsonpClient.loadScript(jqpUrl, function(error) {
+                        global.define = backedupDefine;
+
                         if (error) {
                             return this._onloadFinished(new Error('jqp load: ' + error.message));
                         }
@@ -111,26 +101,21 @@
                 var staticId = this.staticId;
                 var staticMd5Url = this.staticMd5Url;
 
-                if (options) {
-                    if (options.staticId) {
-                        staticId = options.staticId;
-                    }
+                options = this._getOptions(options);
 
-                    if (options.staticMd5Url) {
-                        if (options.staticMd5Url in staticMd5Urls) {
-                            staticMd5Url = staticMd5Urls[options.staticMd5Url];
-                        }
-                        else {
-                            staticMd5Url = options.staticMd5Url;
-                        }
-                    }
+                if (options.staticId) {
+                    staticId = options.staticId;
+                }
+
+                if (options.staticMd5Url) {
+                    staticMd5Url = options.staticMd5Url;
                 }
 
                 jsonpClient.get(
                     staticMd5Url.replace('{{ID}}', staticId),
                     function(error, data) {
                         if (error) {
-                            return callback(new Error('staticMd5 load: ' + error));
+                            return callback(error);
                         }
 
                         if (!data.result) {
@@ -146,8 +131,44 @@
                 return 'jquery.player.' + buildId + '.js';
             },
 
+            _getOptions: function _getOptions(options) {
+                var result = {};
+
+                if (!options) {
+                    return result;
+                }
+
+                if (typeof options === 'string') {
+                    if (!/^jquery\.player\.(.+\.)?js$/.test(options)) {
+                        options = this._makeStaticId(options);
+                    }
+
+                    result.staticId = options;
+                }
+                else {
+                    if (options.buildId) {
+                        result.staticId = this._makeStaticId(options.buildId);
+                    }
+                    else if (options.staticId) {
+                        result.staticId = options.staticId;
+                    }
+
+                    if (options.staticMd5Url) {
+                        if (options.staticMd5Url in staticMd5Urls) {
+                            result.staticMd5Url = staticMd5Urls[options.staticMd5Url];
+                        }
+                        else {
+                            result.staticMd5Url = options.staticMd5Url;
+                        }
+                    }
+                }
+
+                return result;
+            },
+
             _matchOptions: function _matchOptions(options) {
-                return (!options.buildId || this._makeStaticId(options.buildId) === this.staticId) &&
+                return !options ||
+                    (!options.buildId || this._makeStaticId(options.buildId) === this.staticId) &&
                     (!options.staticId || options.staticId === this.staticId) &&
                     (!options.staticMd5Url || options.staticMd5Url === this.staticMd5Url);
             },
