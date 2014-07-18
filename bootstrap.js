@@ -1,12 +1,25 @@
 ;(function(global) {
     function factory(jsonpClient) {
+
+        var staticMd5Urls = {
+            prod: 'http://webservices.francetelevisions.fr/assets/staticmd5/getUrl?callback={{CALLBACK_NAME}}&id={{ID}}',
+            preprod: 'http://webservices.ftv-preprod.fr/assets/staticmd5/getUrl?callback={{CALLBACK_NAME}}&id={{ID}}',
+            dev: 'http://player.ftven.net/staticmd5/url/{{ID}}',
+            local: 'http://0.0.0.O:8090/staticmd5/url/{{ID}}'
+        };
+
         return {
-            staticMd5Url: 'http://webservices.francetelevisions.fr/assets/staticmd5/getUrl?callback={{CALLBACK_NAME}}&id={{ID}}',
+            staticMd5Url: staticMd5Urls.prod,
 
             staticId: 'jquery.player.default.js',
 
             createPlayer: function createPlayer(container, options, callback) {
-                this.get(['PlayerApi'], function(error, Player) {
+                if (arguments.length === 2) {
+                    callback = options;
+                    options = {};
+                }
+
+                this.get(['PlayerApi'], function(error, options, Player) {
                     if (error) {
                         return callback(error);
                     }
@@ -15,8 +28,13 @@
                 });
             },
 
-            get: function get(requestList, callback) {
-                this.load(function(error) {
+            get: function get(requestList, options, callback) {
+                if (arguments.length === 2) {
+                    callback = options;
+                    options = {};
+                }
+
+                this.load(options, function(error) {
                     if (error) {
                         return callback(error);
                     }
@@ -28,16 +46,6 @@
                         callback.bind(null, null)
                     );
                 }.bind(this));
-            },
-
-            _makeStaticId: function _makeStaticId(buildId) {
-                return 'jquery.player.' + buildId + '.js';
-            },
-
-            _matchOptions: function _matchOptions(options) {
-                return (!options.buildId || this._makeStaticId(options.buildId) === this.staticId) &&
-                    (!options.staticId || options.staticId === this.staticId) &&
-                    (!options.staticMd5Url || options.staticMd5Url === this.staticMd5Url);
             },
 
             load: function load(options, callback) {
@@ -57,26 +65,28 @@
 
                 this._loading = true;
 
-                if (options.buildId) {
-                    this.staticId = this._makeStaticId(options.buildId);
-                }
-                else if (options.staticId) {
-                    this.staticId = options.staticId;
-                }
+                if (typeof options === 'string') {
+                    if (!/^jquery\.player\.(.+\.)?js$/.test(options)) {
+                        options = this._makeStaticId(options);
+                    }
 
-                if (options.staticMd5Url) {
-                    switch (options.staticMd5Url) {
-                        case 'local':
-                            this.staticMd5Url = 'http://0.0.0.O:8090/staticmd5/url/{{ID}}';
-                            break;
-                        case 'dev':
-                            this.staticMd5Url = 'http://player.ftven.net/staticmd5/url/{{ID}}?callback={{CALLBACK_NAME}}';
-                            break;
-                        case 'preprod':
-                            this.staticMd5Url = 'http://webservices.ftv-preprod.fr/assets/staticmd5/getUrl?callback={{CALLBACK_NAME}}&id={{ID}}';
-                            break;
-                        default:
+                    this.staticId = options;
+                }
+                else if (options) {
+                    if (options.buildId) {
+                        this.staticId = this._makeStaticId(options.buildId);
+                    }
+                    else if (options.staticId) {
+                        this.staticId = options.staticId;
+                    }
+
+                    if (options.staticMd5Url) {
+                        if (options.staticMd5Url in staticMd5Urls) {
+                            this.staticMd5Url = staticMd5Urls[options.staticMd5Url];
+                        }
+                        else {
                             this.staticMd5Url = options.staticMd5Url;
+                        }
                     }
                 }
 
@@ -93,7 +103,7 @@
                             return this._onloadFinished('invalid staticMd5 result');
                         }
 
-                        this.loadScript(data.result, function(error) {
+                        jsonpClient.loadScript(data.result, function(error) {
                             if (error) {
                                 return this._onloadFinished('jqp load: ' + error.message);
                             }
@@ -104,9 +114,15 @@
                 );
             },
 
-            jsonpClient: jsonpClient,
+            _makeStaticId: function _makeStaticId(buildId) {
+                return 'jquery.player.' + buildId + '.js';
+            },
 
-            loadScript: jsonpClient.loadScript,
+            _matchOptions: function _matchOptions(options) {
+                return (!options.buildId || this._makeStaticId(options.buildId) === this.staticId) &&
+                    (!options.staticId || options.staticId === this.staticId) &&
+                    (!options.staticMd5Url || options.staticMd5Url === this.staticMd5Url);
+            },
 
             _onloadFinished: function _onloadFinished(error) {
                 this._loading = false;
@@ -129,9 +145,9 @@
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['../../bower_components/jsonpClient/index'], factory);
+        define(['bower_components/jsonpClient/index'], factory);
     } else {
         // Browser globals
-        global.jqpBootstrap = factory();
+        global.jqpBootstrap = factory(global.jsonpClient);
     }
 }(this));
