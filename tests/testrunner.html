@@ -31,7 +31,7 @@
         mocha = window.mochaPhantomJS ? mochaPhantomJS : mocha;
 
         // require the test file
-        require(['tests/index'], function() {
+        require(['tests/bootstrap'], function() {
             mocha.run();
         });
     });
