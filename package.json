@@ -1,6 +1,6 @@
 {
   "name": "jqp-bootstrap",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A JS bootstrap for JQP",
   "author": "FTVEN",
   "keywords": [
@@ -16,7 +16,7 @@
   "main": "bootstrap.js",
   "scripts": {
     "postinstall": "bower install",
-    "test": "mocha-phantomjs -R spec tests/testrunner.html"
+    "test": "mocha-phantomjs -R spec test/testrunner.html"
   },
   "devDependencies": {
     "bower": "*",

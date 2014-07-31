@@ -1,6 +1,6 @@
 {
   "name": "jqp-bootstrap",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A JS bootstrap for JQP",
   "authors": [
     "FTVEN"
@@ -27,7 +27,6 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "tests",
     "test"
   ],
   "dependencies": {

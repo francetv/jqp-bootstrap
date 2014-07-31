@@ -22,7 +22,7 @@ How to use it
 This library implements [UMD](http://bob.yexley.net/umd-javascript-that-runs-anywhere/), so you can import it with AMD or browser globals
 
 ```javascript
-require(['bower_components/jqp-bootstrap/bootstrap', ...], function (jqp-bootstrap, ...) {
+require(['bower_components/jqp-bootstrap/bootstrap', ...], function (bootstrap, ...) {
     ...
 });
 ```
