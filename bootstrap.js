@@ -191,7 +191,7 @@
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['bower_components/jsonpClient/index'], factory);
+        define(['bower_components/jsonpClient/jsonpClient'], factory);
     } else {
         // Browser globals
         global.jqpBootstrap = factory(global.jsonpClient);
