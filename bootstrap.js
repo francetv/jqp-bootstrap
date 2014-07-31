@@ -19,7 +19,7 @@
                     options = {};
                 }
 
-                this.get(['PlayerApi'], function(error, options, Player) {
+                this.get(['PlayerApi'], options, function(error, Player) {
                     if (error) {
                         return callback(error);
                     }
@@ -123,7 +123,7 @@
                         }
 
                         callback(null, data.result);
-                    }.bind(this)
+                    }
                 );
             },
 
