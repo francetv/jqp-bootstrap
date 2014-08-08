@@ -1,4 +1,5 @@
-;(function(global) {
+;
+(function(global) {
     function factory(jsonpClient) {
 
         var staticMd5Urls = {
@@ -10,7 +11,6 @@
 
         return {
             staticMd5Url: staticMd5Urls.prod,
-
             staticId: 'jquery.player.default.js',
 
             createPlayer: function createPlayer(container, options, callback) {
@@ -19,12 +19,13 @@
                     options = {};
                 }
 
-                this.get(['PlayerApi'], options, function(error, Player) {
-                    if (error) {
-                        return callback(error);
-                    }
+                // Define the global OAS_sitepage var if defined in the options
+                if (options.oasSitePage) {
+                    OAS_sitepage = options.oasSitePage;
+                }
 
-                    callback(null, new Player(container, options));
+                this.get(['PlayerApi'], options, function(Player) {
+                    callback(new Player(container, options));
                 });
             },
 
@@ -39,7 +40,7 @@
                         return callback(error);
                     }
 
-                    jqprequire(
+                    require(
                         requestList,
 
                         // insert null as callback's first argument (error)
@@ -82,12 +83,7 @@
                         return this._onloadFinished(error);
                     }
 
-                    var backedupDefine = global.define;
-                    global.define = undefined;
-
                     jsonpClient.loadScript(jqpUrl, function(error) {
-                        global.define = backedupDefine;
-
                         if (error) {
                             return this._onloadFinished(new Error('jqp load: ' + error.message));
                         }
@@ -144,20 +140,17 @@
                     }
 
                     result.staticId = options;
-                }
-                else {
+                } else {
                     if (options.buildId) {
                         result.staticId = this._makeStaticId(options.buildId);
-                    }
-                    else if (options.staticId) {
+                    } else if (options.staticId) {
                         result.staticId = options.staticId;
                     }
 
                     if (options.staticMd5Url) {
                         if (options.staticMd5Url in staticMd5Urls) {
                             result.staticMd5Url = staticMd5Urls[options.staticMd5Url];
-                        }
-                        else {
+                        } else {
                             result.staticMd5Url = options.staticMd5Url;
                         }
                     }
