@@ -13,7 +13,7 @@
     "type": "git",
     "url": "https://gitlab.ftven.net/player/jqp-bootstrap"
   },
-  "main": "bootstrap.js",
+  "main": "src/jqp-bootstrap.js",
   "scripts": {
     "postinstall": "bower install",
     "test": "mocha-phantomjs -R spec test/testrunner.html && mocha-phantomjs -R spec test/testrunner-global.html"

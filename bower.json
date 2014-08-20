@@ -16,7 +16,7 @@
   "license": "MIT",
   "private": true,
   "homepage": "https://gitlab.ftven.net/player/jqp-bootstrap",
-  "main": "bootstrap.js",
+  "main": "bootstrap.min.js",
   "devDependencies": {
     "requirejs-bower": "*",
     "mocha": "*",
