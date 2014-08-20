@@ -43,7 +43,8 @@ module.exports = function(grunt) {
           'bower.json',
           'bootstrap.min.js',
           'bootstrap.standalone.js',
-          'bootstrap.standalone.min.js'
+          'bootstrap.standalone.min.js',
+          'cov.html'
         ],
         commitForceAdd: true,
         createTag: true,
@@ -52,6 +53,11 @@ module.exports = function(grunt) {
         push: true,
         pushTo: 'origin',
         gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d'
+      }
+    },
+    'check-coverage': {
+      options: {
+        files: ['src/jqp-bootstrap.js']
       }
     }
   });
@@ -74,7 +80,7 @@ module.exports = function(grunt) {
     "Release a new version, than commit and push it",
     function(target) {
       target = target || "patch";
-      grunt.task.run("check-meta-consistency", "check-git-clean", "test", "build", "bump:" + target);
+      grunt.task.run("check-meta-consistency", "check-git-clean", "test", "check-coverage", "build", "bump:" + target);
     }
   );
 
@@ -132,6 +138,179 @@ module.exports = function(grunt) {
           grunt.log.ok('GIT repo clean.');
           done();
         });
+    }
+  );
+
+  grunt.registerTask("check-coverage",
+    "Check current tests code coverage",
+    function() {
+        var spawn = require('child_process').spawn;
+        var exec = require('child_process').exec;
+        var fs = require('fs');
+        var finaly = this.async();
+
+        var opts = this.options({
+          files: []
+        });
+
+        prepareFiles(function(errorPrepare) {
+          if (errorPrepare) {
+            return revert(function(errorRollback) {
+              if (errorRollback) {
+                grunt.fatal('Error while preparing file and rollback.\n' + errorPrepare + '\n' + errorRollback);
+              }
+
+              grunt.fatal('Error while preparing files for coverage.\n' + errorPrepare);
+            });
+          }
+
+          getFileCov(function(err, json, html) {
+            if (err) {
+              grunt.log.error('Unable to get coverage.\n' + err);
+            }
+            else {
+              grunt.file.write('cov.html', html);
+            }
+
+            revert(function(error) {
+              if (error) {
+                grunt.fatal('Error while rollbacking files.\n' + error);
+              }
+
+              if (json.coverage < 50) {
+                grunt.fatal('coverage too low: ' + json.coverage);
+              }
+              else {
+                grunt.log.write('coverage: ' + json.coverage);
+                finaly();
+              }
+            });
+          });
+        });
+
+        function revert(cb) {
+          var count = 0;
+          var errors = [];
+
+          function done(err) {
+            if (err) {
+              errors.push(err);
+            }
+
+            if (++count === opts.files.length) {
+              if (!errors.length) {
+                errors = null;
+              }
+              cb(errors);
+            }
+          }
+
+          opts.files.forEach(function(file) {
+            fs.stat(file + '~', function(err) {
+              if (err) {
+                return done();
+              }
+
+              exec('mv ' + file + '~ ' + file, function(err, stdout, stderr) {
+                if (err) {
+                  return done('unable to restore file:\n' + file + '\n' + err);
+                }
+                done();
+              });
+            });
+          });
+        }
+
+        function prepareFiles(cb) {
+          var count = 0;
+          var errors = [];
+
+          function done(err) {
+            if (err) {
+              errors.push(err);
+            }
+
+            if (++count === opts.files.length) {
+              if (!errors.length) {
+                errors = null;
+              }
+              cb(errors);
+            }
+          }
+
+          opts.files.forEach(function(file) {
+            try {
+              grunt.file.copy(file, file + '~');
+            }
+            catch(err) {
+              done('unable to backup file:\n' + file + '\n' + err);
+              return;
+            }
+
+            exec('./node_modules/.bin/jscoverage ' + file + ' ' + file, function(err, stdout, stderr) {
+              if (err) {
+                return done('unable to prepare file with jscoverage:\n' + file + '\n' + err);
+              }
+
+              done();
+            });
+          });
+        }
+
+        function getFileCov(cb) {
+          var resultJSON = '';
+          var resultHTML = '';
+          var errors = [];
+
+          var convertor = spawn('node_modules/.bin/json2htmlcov');
+          var testrunner = spawn('node_modules/.bin/mocha-phantomjs', ['-R', 'json-cov', 'test/testrunner.html']);
+
+          testrunner.stdout.on('data', function (data) {
+            resultJSON += data;
+          });
+
+          testrunner.stderr.on('data', function (data) {
+            errors.push(data);
+          });
+
+          testrunner.on('close', function (code) {
+            if (code !== 0 && !errors.length) {
+              errors.push('testrunner exited with code ' + code);
+            }
+
+            if (!errors.length && resultJSON) {
+              convertor.stdin.write(resultJSON);
+            }
+
+            convertor.stdin.end();
+          });
+
+          convertor.stdout.on('data', function (data) {
+            resultHTML += data;
+          });
+
+          convertor.stderr.on('data', function (data) {
+            errors.push(data);
+          });
+
+          convertor.on('close', function (code) {
+            if (code !== 0 && !errors.length) {
+              errors.push('convertor exited with code ' + code);
+            }
+
+            if (!errors.length) {
+              try {
+                resultJSON = JSON.parse(resultJSON);
+                errors = null;
+              }
+              catch(error) {
+                errors.push(error);
+              }
+            }
+
+            cb(errors, resultJSON, resultHTML);
+          });
+        }
     }
   );
 };
