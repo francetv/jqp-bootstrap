@@ -27,7 +27,8 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "test"
+    "test",
+    "src"
   ],
   "dependencies": {
     "jsonpClient": "git@gitlab.ftven.net:player/jsonpclient.git#0.0.1"

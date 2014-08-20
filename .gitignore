@@ -1,2 +1,5 @@
 node_modules
 bower_components
+bootstrap.min.js
+bootstrap.standalone.js
+bootstrap.standalone.min.js
