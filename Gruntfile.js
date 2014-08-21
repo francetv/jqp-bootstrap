@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     bwr: grunt.file.readJSON('bower.json'),
 
     clean: {
-      js: ["bootstrap.min.js", "bootstrap.standalone.js", "bootstrap.standalone.min.js"]
+      js: ["bootstrap.min.js", "bootstrap.standalone.js", "bootstrap.standalone.min.js", "cov.html"]
     },
     mocha_phantomjs: {
       all: ['test/**/testrunner*.html']
