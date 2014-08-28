@@ -161,11 +161,6 @@
                     options = {};
                 }
 
-                // Define the global OAS_sitepage var if defined in the options
-                if (options.oasSitePage) {
-                    OAS_sitepage = options.oasSitePage;
-                }
-
                 this.get(['PlayerApi'], options, function(Player) {
                     callback(new Player(container, options));
                 });
