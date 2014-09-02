@@ -5,30 +5,47 @@ module.exports = function(grunt) {
     bwr: grunt.file.readJSON('bower.json'),
 
     clean: {
-      js: ["bootstrap.min.js", "bootstrap.standalone.js", "bootstrap.standalone.min.js", "cov.html"]
+      cov: ['cov.html'],
+      dist: ["<%= pkg.name %>.min.js", "<%= pkg.name %>.standalone.min.js"],
+      build_residues: ["<%= pkg.name %>.standalone.js", "<%= pkg.name %>.js"]
     },
-    mocha_phantomjs: {
-      all: ['test/**/testrunner*.html']
+    test: {
+      dev: ['test/**/testrunner*.html'],
+      build: ['test/**/buildtester*.html']
     },
     requirejs: {
-      compile: {
+      standalone: {
         options: {
           baseUrl: "./src",
           name: "<%= pkg.name %>",
-          out: "bootstrap.standalone.js",
-          optimize: "none"
+          out: "<%= pkg.name %>.standalone.js",
+          optimize: "none",
+          paths: {
+            'jsonpClient': '../bower_components/jsonpClient/jsonpClient'
+          }
+        }
+      },
+      nodeps: {
+        options: {
+          baseUrl: "./src",
+          name: "<%= pkg.name %>",
+          out: "<%= pkg.name %>.js",
+          optimize: "none",
+          paths: {
+            jsonpClient: 'empty:'
+          }
         }
       }
     },
     uglify: {
       dist: {
         files: {
-          'bootstrap.min.js': ['src/<%= pkg.name %>.js']
+          '<%= pkg.name %>.min.js': ['<%= pkg.name %>.js']
         }
       },
       standalone: {
         files: {
-          'bootstrap.standalone.min.js': ['bootstrap.standalone.js']
+          '<%= pkg.name %>.standalone.min.js': ['<%= pkg.name %>.standalone.js']
         }
       }
     },
@@ -41,9 +58,8 @@ module.exports = function(grunt) {
         commitFiles: [
           'package.json',
           'bower.json',
-          'bootstrap.min.js',
-          'bootstrap.standalone.js',
-          'bootstrap.standalone.min.js',
+          '<%= pkg.name %>.min.js',
+          '<%= pkg.name %>.standalone.min.js',
           'cov.html'
         ],
         commitForceAdd: true,
@@ -58,8 +74,19 @@ module.exports = function(grunt) {
     'check-coverage': {
       src: ['src/**/*.js'],
       options: {
-        minimumCov: 50,
+        minimumCov: 64,
         testRunnerFile: 'test/testrunner.html'
+      }
+    },
+    'check-git-clean': {
+      options: {
+        ignore: [
+          '<%= pkg.name %>*.js',
+          '<%= pkg.name %>.min.js',
+          '<%= pkg.name %>.standalone.js',
+          '<%= pkg.name %>.standalone.min.js',
+          'cov.html'
+        ]
       }
     }
   });
@@ -72,11 +99,9 @@ module.exports = function(grunt) {
 
   grunt.loadTasks('grunt-tasks');
 
-  grunt.registerTask('clean-main', ['clean:js']);
+  grunt.renameTask('mocha_phantomjs', 'test');
 
-  grunt.registerTask('test', ['mocha_phantomjs']);
+  grunt.registerTask('build', ['clean:dist', 'clean:build_residues', 'requirejs', 'uglify', 'clean:build_residues']);
 
-  grunt.registerTask('build', ['clean-main', 'requirejs', 'uglify']);
-
-  grunt.registerTask('default', ['test','build']);
+  grunt.registerTask('default', ['test:dev', 'build', 'test:build']);
 };

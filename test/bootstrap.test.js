@@ -139,7 +139,7 @@
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['src/jqp-bootstrap', 'bower_components/jsonpClient/jsonpClient', 'chai', 'sinon', 'mocha'], factory);
+        define(['jqp-bootstrap', 'jsonpClient', 'chai', 'sinon', 'mocha'], factory);
     } else {
         // Browser globals
         factory(global.jqpBootstrap, global.jsonpClient, global.chai, global.sinon, global.mocha);
