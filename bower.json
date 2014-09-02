@@ -16,7 +16,7 @@
   "license": "MIT",
   "private": true,
   "homepage": "https://gitlab.ftven.net/player/jqp-bootstrap",
-  "main": "bootstrap.min.js",
+  "main": "jqp-bootstrap.min.js",
   "devDependencies": {
     "requirejs-bower": "*",
     "mocha": "*",
@@ -31,7 +31,7 @@
     "src",
     "cov.html",
     "Gruntfile.js",
-    "hooks.json",
+    "grunt-tasks",
     "package.json"
   ],
   "dependencies": {
