@@ -3,11 +3,12 @@ var deps = __TEST_SUITES__.slice();
 deps.unshift('mocha');
 
 require.config({
-    baseUrl: "../",
+    baseUrl: "../src/",
     paths: {
-        'mocha': 'bower_components/mocha/mocha',
-        'chai': 'bower_components/chai/chai',
-        'sinon': 'bower_components/sinonjs/sinon'
+        'mocha': '../bower_components/mocha/mocha',
+        'chai': '../bower_components/chai/chai',
+        'sinon': '../bower_components/sinonjs/sinon',
+        'jsonpClient': '../bower_components/jsonpClient/jsonpClient'
     },
     shim: {
         mocha: {
