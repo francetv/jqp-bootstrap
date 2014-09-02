@@ -1,11 +1,36 @@
+var spawn = require('child_process').spawn;
+var fs = require('fs');
+
+function copyFile(source, target, cb) {
+  var cbCalled = false;
+
+  var rd = fs.createReadStream(source);
+  rd.on("error", function(err) {
+    done(err);
+  });
+  var wr = fs.createWriteStream(target);
+  wr.on("error", function(err) {
+    done(err);
+  });
+  wr.on("close", function(ex) {
+    done();
+  });
+  rd.pipe(wr);
+
+  function done(err) {
+    if (!cbCalled) {
+      cbCalled = true;
+      cb(err);
+    }
+  }
+}
+
 module.exports = function (grunt) {
     grunt.registerMultiTask('check-coverage', 'Check current tests code coverage', function(){
-        var spawn = require('child_process').spawn;
-        var fs = require('fs');
         var finaly = this.async();
 
         var opts = this.options({
-          minimumCov: 50,
+          minimumCov: 90,
           testRunnerFile: 'test/testrunner.html'
         });
         var files = this.filesSrc;
@@ -73,30 +98,30 @@ module.exports = function (grunt) {
                 return done();
               }
 
-              try {
-                grunt.file.copy(file + '~', file);
-              }
-              catch(error) {
-                done('unable to restore file:\n' + file + '\n' + err);
-                return;
-              }
+              copyFile(file + '~', file, function(err) {
+                if (err) {
+                  grunt.log.write('-');
+                  return done('unable to restore file:\n' + file + '\n' + err);
+                }
 
-              try {
-                grunt.file.delete(file + '~');
-              }
-              catch(error) {
-                done('unable to delete backup file:\n' + file + '\n' + err);
-                return;
-              }
+                try {
+                  grunt.file.delete(file + '~');
+                }
+                catch(error) {
+                  grunt.log.write('-');
+                  done('unable to delete backup file:\n' + file + '\n' + err);
+                  return;
+                }
 
-              grunt.log.writeln(' - ' + file + '~ -> ' + file);
-              done();
+                grunt.log.write('.');
+                done();
+              });
             });
           });
         }
 
         function prepareFiles(cb) {
-          grunt.log.writeln('prepare files for jscoverage (backup to files~)');
+          grunt.log.writeln('prepare files for jscoverage (backup to files~ and convert files with jscoverage)');
           var count = 0;
           var errors = [];
 
@@ -114,23 +139,22 @@ module.exports = function (grunt) {
           }
 
           files.forEach(function(file) {
-            try {
-              grunt.file.copy(file, file + '~');
-            }
-            catch(err) {
-              done('unable to backup file:\n' + file + '\n' + err);
-              return;
-            }
-
-            var checker = spawn('./node_modules/.bin/jscoverage', [file, file]);
-
-            checker.on('close', function(code) {
-              if (code !== 0) {
-                return done('unable to prepare file with jscoverage:\n' + file + '\n' + err);
+            copyFile(file, file + '~', function(err) {
+              if (err) {
+                grunt.log.write('-');
+                return done('unable to backup file:\n' + file + '\n' + err);
               }
+              grunt.log.write('.');
 
-              grunt.log.writeln(' - ' + file + ' -> ' + file + '~');
-              done();
+              var checker = spawn('./node_modules/.bin/jscoverage', [file, file]);
+
+              checker.on('close', function(code) {
+                if (code !== 0) {
+                  return done('unable to prepare file with jscoverage:\n' + file + '\n' + err);
+                }
+
+                done();
+              });
             });
           });
         }
@@ -159,6 +183,11 @@ module.exports = function (grunt) {
             }
 
             if (!errors.length && resultJSON) {
+
+              resultJSON = resultJSON.replace(/^[^{]*{/, '{');
+              resultJSON = resultJSON.replace(/}[^}]*$/, '}');
+              resultJSON = resultJSON.replace(/\\"/g, '\\"');
+
               convertor.stdin.write(resultJSON);
             }
 
