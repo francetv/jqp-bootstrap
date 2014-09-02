@@ -9,9 +9,11 @@
         'sinon': __COMPONENTS_PATH__ + 'sinonjs/sinon'
     };
 
-    Object.keys(__LIB_PATHS__).forEach(function(key) {
-        paths[key] = __LIB_PATHS__[key];
-    });
+    if (__LIB_PATHS__) {
+        Object.keys(__LIB_PATHS__).forEach(function(key) {
+            paths[key] = __LIB_PATHS__[key];
+        });
+    }
 
     require.config({
         baseUrl: __BASE_URL__,
