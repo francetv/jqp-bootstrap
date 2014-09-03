@@ -21,7 +21,7 @@ module.exports = function(grunt) {
           out: "<%= pkg.name %>.standalone.js",
           optimize: "none",
           paths: {
-            'jsonpClient': '../bower_components/jsonpClient/jsonpClient'
+            'jsonpClient': '../bower_components/jsonpClient/jsonpClient.min'
           }
         }
       },

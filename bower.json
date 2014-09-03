@@ -35,6 +35,6 @@
     "package.json"
   ],
   "dependencies": {
-    "jsonpClient": "git@gitlab.ftven.net:player/jsonpclient.git#0.0.1"
+    "jsonpClient": "git@gitlab.ftven.net:player/jsonpclient.git#0.1.0"
   }
 }
