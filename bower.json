@@ -17,6 +17,9 @@
   "private": true,
   "homepage": "https://gitlab.ftven.net/player/jqp-bootstrap",
   "main": "jqp-bootstrap.min.js",
+  "dependencies": {
+    "jsonpClient": "git@gitlab.ftven.net:player/jsonpclient.git#0.1.0"
+  },
   "devDependencies": {
     "requirejs-bower": "*",
     "mocha": "*",
@@ -33,8 +36,5 @@
     "Gruntfile.js",
     "grunt-tasks",
     "package.json"
-  ],
-  "dependencies": {
-    "jsonpClient": "git@gitlab.ftven.net:player/jsonpclient.git#0.1.0"
-  }
+  ]
 }
