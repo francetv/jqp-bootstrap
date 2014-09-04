@@ -14,6 +14,17 @@ module.exports = function(grunt) {
       build: ['test/**/buildtester*.html']
     },
     requirejs: {
+      dist: {
+        options: {
+          baseUrl: "./src",
+          name: "<%= pkg.name %>",
+          out: "<%= pkg.name %>.js",
+          optimize: "none",
+          paths: {
+            jsonpClient: 'empty:'
+          }
+        }
+      },
       standalone: {
         options: {
           baseUrl: "./src",
@@ -22,17 +33,6 @@ module.exports = function(grunt) {
           optimize: "none",
           paths: {
             'jsonpClient': '../bower_components/jsonpClient/jsonpClient.min'
-          }
-        }
-      },
-      nodeps: {
-        options: {
-          baseUrl: "./src",
-          name: "<%= pkg.name %>",
-          out: "<%= pkg.name %>.js",
-          optimize: "none",
-          paths: {
-            jsonpClient: 'empty:'
           }
         }
       }
