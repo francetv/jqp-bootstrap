@@ -11,7 +11,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://gitlab.ftven.net/player/jqp-bootstrap"
+    "url": "https://github.com/francetv/jqp-bootstrap.git"
   },
   "main": "src/jqp-bootstrap.js",
   "scripts": {
