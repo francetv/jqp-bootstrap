@@ -1,6 +1,6 @@
 {
   "name": "jqp-bootstrap",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A JS bootstrap for JQP",
   "authors": [
     "FTVEN"
@@ -15,8 +15,11 @@
   ],
   "license": "MIT",
   "private": true,
-  "homepage": "https://gitlab.ftven.net/player/jqp-bootstrap",
+  "homepage": "https://github.com/francetv/jqp-bootstrap.git",
   "main": "jqp-bootstrap.min.js",
+  "dependencies": {
+    "jsonpClient": "https://github.com/francetv/jsonpClient.git#0.1.1"
+  },
   "devDependencies": {
     "requirejs-bower": "*",
     "mocha": "*",
@@ -33,8 +36,5 @@
     "Gruntfile.js",
     "grunt-tasks",
     "package.json"
-  ],
-  "dependencies": {
-    "jsonpClient": "git@gitlab.ftven.net:player/jsonpclient.git#0.1.0"
-  }
+  ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "jqp-bootstrap",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A JS bootstrap for JQP",
   "author": "FTVEN",
   "keywords": [
@@ -11,7 +11,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://gitlab.ftven.net/player/jqp-bootstrap"
+    "url": "https://github.com/francetv/jqp-bootstrap.git"
   },
   "main": "src/jqp-bootstrap.js",
   "scripts": {

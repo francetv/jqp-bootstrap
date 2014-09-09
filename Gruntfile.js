@@ -7,13 +7,24 @@ module.exports = function(grunt) {
     clean: {
       cov: ['cov.html'],
       dist: ["<%= pkg.name %>.min.js", "<%= pkg.name %>.standalone.min.js"],
-      build_residues: ["<%= pkg.name %>.standalone.js", "<%= pkg.name %>.js"]
+      build_residues: ["<%= pkg.name %>.js", "<%= pkg.name %>.standalone.js"]
     },
     test: {
       dev: ['test/**/testrunner*.html'],
       build: ['test/**/buildtester*.html']
     },
     requirejs: {
+      dist: {
+        options: {
+          baseUrl: "./src",
+          name: "<%= pkg.name %>",
+          out: "<%= pkg.name %>.js",
+          optimize: "none",
+          paths: {
+            jsonpClient: 'empty:'
+          }
+        }
+      },
       standalone: {
         options: {
           baseUrl: "./src",
@@ -22,17 +33,6 @@ module.exports = function(grunt) {
           optimize: "none",
           paths: {
             'jsonpClient': '../bower_components/jsonpClient/jsonpClient.min'
-          }
-        }
-      },
-      nodeps: {
-        options: {
-          baseUrl: "./src",
-          name: "<%= pkg.name %>",
-          out: "<%= pkg.name %>.js",
-          optimize: "none",
-          paths: {
-            jsonpClient: 'empty:'
           }
         }
       }

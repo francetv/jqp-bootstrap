@@ -11,7 +11,7 @@ This library has been declined in a bower component so in order to use it just a
 ```json
 "dependencies": {
     ...
-    "jqp-bootstrap": "git@gitlab.ftven.net:player/jqp-bootstrap.git"
+    "jqp-bootstrap": "https://github.com/francetv/jqp-bootstrap.git"
     ...
 }
 ```
