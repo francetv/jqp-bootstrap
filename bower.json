@@ -1,6 +1,6 @@
 {
   "name": "jqp-bootstrap",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A JS bootstrap for JQP",
   "authors": [
     "FTVEN"
@@ -18,7 +18,7 @@
   "homepage": "https://github.com/francetv/jqp-bootstrap.git",
   "main": "jqp-bootstrap.min.js",
   "dependencies": {
-    "jsonpClient": "https://github.com/francetv/jsonpClient.git#0.1.1"
+    "jsonpClient": "https://github.com/francetv/jsonpClient.git#0.1.x"
   },
   "devDependencies": {
     "requirejs-bower": "*",
