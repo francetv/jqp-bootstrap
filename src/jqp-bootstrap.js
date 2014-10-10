@@ -78,13 +78,16 @@
                         return this._onloadFinished(error);
                     }
 
-                    jsonpClient.loadScript(jqpUrl, function(error) {
-                        if (error) {
-                            return this._onloadFinished(new Error('jqp load: ' + error.message));
-                        }
+                    jsonpClient.loadScript(
+                        jqpUrl,
+                        function(error) {
+                            if (error) {
+                                return this._onloadFinished(new Error('jqp load: ' + error.message));
+                            }
 
-                        this._onloadFinished();
-                    }.bind(this));
+                            this._onloadFinished();
+                        }.bind(this)
+                    );
                 }.bind(this));
             },
 
@@ -103,7 +106,10 @@
                 }
 
                 jsonpClient.get(
-                    staticMd5Url.replace('{{ID}}', staticId),
+                    {
+                        url: staticMd5Url.replace('{{ID}}', staticId),
+                        timeout: 5000
+                    },
                     function(error, data) {
                         if (error) {
                             return callback(error);
