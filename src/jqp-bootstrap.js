@@ -1,4 +1,3 @@
-;
 (function(global) {
     function factory(jsonpClient) {
 
@@ -37,8 +36,6 @@
 
                     require(
                         requestList,
-
-                        // insert null as callback's first argument (error)
                         callback
                     );
                 }.bind(this));
