@@ -100,6 +100,23 @@
                         done();
                     });
                 });
+
+                it('should work with alternate signature', function(done) {
+                    jqpBootstrap.get(['PlayerApi', 'jquery'], function(error, player, jquery) {
+                        if (error) {
+                            return done(error);
+                        }
+
+                        if (!player) {
+                            return done(new Error('player was not returned'));
+                        }
+
+                        if (!(jquery && jquery.fn && jquery.fn.jquery)) {
+                            return done(new Error('jquery was not returned'));
+                        }
+                        done();
+                    });
+                });
             });
 
             describe('createPlayer', function() {
@@ -126,6 +143,16 @@
 
                 it('should get an instanciated player', function(done) {
                     jqpBootstrap.createPlayer({}, {}, function(player) {
+                        if (!player) {
+                            return done(new Error('player was not returned'));
+                        }
+
+                        done();
+                    });
+                });
+
+                it('should work with alternative signature', function(done) {
+                    jqpBootstrap.createPlayer({}, function(player) {
                         if (!player) {
                             return done(new Error('player was not returned'));
                         }
