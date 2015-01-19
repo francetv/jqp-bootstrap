@@ -12,6 +12,14 @@
             staticMd5Url: staticMd5Urls.prod,
             staticId: 'jquery.player.default.js',
 
+            easyPlayer: function easyPlayer(selector, options) {
+                this.get(['jqueryJQP', 'jquery/player'], options, function($) {
+                    $(function() {
+                        $(selector).player(options);
+                    });
+                });
+            },
+
             createPlayer: function createPlayer(container, options, callback) {
                 if (arguments.length === 2) {
                     callback = options;
