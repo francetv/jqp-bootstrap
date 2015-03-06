@@ -18,7 +18,7 @@
   "homepage": "https://github.com/francetv/jqp-bootstrap.git",
   "main": "jqp-bootstrap.min.js",
   "dependencies": {
-    "jsonpClient": "https://github.com/francetv/jsonpClient.git#0.1.x"
+    "jsonpClient": "https://github.com/francetv/jsonpClient.git#1.0.x"
   },
   "devDependencies": {
     "requirejs-bower": "*",

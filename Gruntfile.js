@@ -21,6 +21,7 @@ module.exports = function(grunt) {
           out: "<%= pkg.name %>.js",
           optimize: "none",
           paths: {
+            scriptloader: 'empty:',
             jsonpClient: 'empty:'
           }
         }
@@ -32,6 +33,7 @@ module.exports = function(grunt) {
           out: "<%= pkg.name %>.standalone.js",
           optimize: "none",
           paths: {
+            'scriptloader': '../bower_components/scriptloader/scriptloader.min',
             'jsonpClient': '../bower_components/jsonpClient/jsonpClient.min'
           }
         }
