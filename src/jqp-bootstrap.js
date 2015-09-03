@@ -124,6 +124,11 @@
                             return callback(new Error('invalid staticMd5 result'));
                         }
 
+                        // fix response to be compatible with https protocol (while not fixed server side)
+                        data.result = data.result
+                            .replace(/^https?:/, '')
+                            .replace(/^\/\/static\.francetv\.fr\//, '//staticftv-a.akamaihd.net/');
+
                         callback(null, data.result);
                     }
                 );
