@@ -16,25 +16,36 @@
   "main": "src/jqp-bootstrap.js",
   "scripts": {
     "postinstall": "bower install",
-    "test": "grunt test"
+    "test": "grunt test:dev",
+    "lint": "jshint .",
+    "validate": "npm ls"
   },
   "devDependencies": {
     "bower": "*",
+    "ftv-mergeup": "*",
+    "ftv-prerelease": "*",
+    "ftv-release": "*",
     "grunt": "*",
-    "grunt-bump": "git://github.com/francetv/grunt-bump.git",
     "grunt-cli": "*",
     "grunt-contrib-clean": "*",
+    "grunt-contrib-rename": "*",
     "grunt-contrib-requirejs": "*",
     "grunt-contrib-uglify": "*",
-    "grunt-mocha-phantomjs": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-mocha-phantomjs": "0.6.x",
     "jscoverage": "*",
+    "jshint": "*",
     "json2htmlcov": "git://github.com/francetv/json2htmlcov.git",
     "mocha-phantomjs": "*",
-    "ftv-mergeup": "*",
-    "ftv-release": "*",
-    "ftv-prerelease": "*"
+    "phantomjs": "1.9.7-14",
+    "precommit-hook": "*"
   },
   "directories": {
     "test": "test"
-  }
+  },
+  "pre-commit": [
+    "lint",
+    "validate",
+    "test"
+  ]
 }

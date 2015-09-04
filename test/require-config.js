@@ -1,12 +1,12 @@
 (function(global, document, __TEST_SUITES__, __LIB_PATHS__, __BASE_URL__, __COMPONENTS_PATH__) {
     // require the test file
     var deps = __TEST_SUITES__.slice();
-    deps.unshift('mocha');
+    deps.unshift("mocha");
 
     var paths = {
-        'mocha': __COMPONENTS_PATH__ + 'mocha/mocha',
-        'chai': __COMPONENTS_PATH__ + 'chai/chai',
-        'sinon': __COMPONENTS_PATH__ + 'sinonjs/sinon'
+        "mocha": __COMPONENTS_PATH__ + "mocha/mocha",
+        "chai": __COMPONENTS_PATH__ + "chai/chai",
+        "sinon": __COMPONENTS_PATH__ + "sinonjs/sinon"
     };
 
     if (__LIB_PATHS__) {
@@ -37,15 +37,15 @@
                     }
                     else {
                         // In browser, add mocha styles
-                        var mochaStyle = document.createElement('link');
-                        mochaStyle.setAttribute('rel', 'stylesheet');
-                        mochaStyle.setAttribute('href', paths.mocha + '.css');
+                        var mochaStyle = document.createElement("link");
+                        mochaStyle.setAttribute("rel", "stylesheet");
+                        mochaStyle.setAttribute("href", __BASE_URL__ + paths.mocha + ".css");
                         document.head.appendChild(mochaStyle);
                     }
 
                     // Add root DOM element for mocha
-                    var mochaRoot = document.createElement('div');
-                    mochaRoot.id = 'mocha';
+                    var mochaRoot = document.createElement("div");
+                    mochaRoot.id = "mocha";
                     document.body.appendChild(mochaRoot);
 
                     global.mocha.setup(setup);
@@ -58,7 +58,7 @@
                 }
             },
             sinon: {
-                exports : 'sinon'
+                exports : "sinon"
             }
         },
         deps: deps,
@@ -67,4 +67,4 @@
             mocha.run();
         }
     });
-}(this, this.document, this.__TEST_SUITES__, this.__LIB_PATHS__, this.__BASE_URL__, __COMPONENTS_PATH__));
+}(this, this.document, this.__TEST_SUITES__, this.__LIB_PATHS__, this.__BASE_URL__, this.__COMPONENTS_PATH__));
