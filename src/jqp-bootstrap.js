@@ -2,10 +2,10 @@
     function factory(jsonpClient) {
 
         var staticMd5Urls = {
-            prod: 'http://webservices.francetelevisions.fr/assets/staticmd5/getUrl?callback={{CALLBACK_NAME}}&id={{ID}}',
-            preprod: 'http://webservices.ftv-preprod.fr/assets/staticmd5/getUrl?callback={{CALLBACK_NAME}}&id={{ID}}',
-            dev: 'http://player.ftven.net/staticmd5/url/{{ID}}',
-            local: 'http://0.0.0.0:8090/staticmd5/url/{{ID}}'
+            prod: '//sivideo.webservices.francetelevisions.fr/assets/staticmd5/getUrl?callback={{CALLBACK_NAME}}&id={{ID}}',
+            preprod: '//sivideo.webservices.ftv-preprod.fr/assets/staticmd5/getUrl?callback={{CALLBACK_NAME}}&id={{ID}}',
+            dev: '//player.ftven.net/staticmd5/url/{{ID}}',
+            local: '//127.0.0.1:8090/staticmd5/url/{{ID}}'
         };
 
         return {
@@ -123,6 +123,11 @@
                         if (!data.result) {
                             return callback(new Error('invalid staticMd5 result'));
                         }
+
+                        // fix response to be compatible with https protocol (while not fixed server side)
+                        data.result = data.result
+                            .replace(/^https?:/, '')
+                            .replace(/^\/\/static\.francetv\.fr\//, '//staticftv-a.akamaihd.net/');
 
                         callback(null, data.result);
                     }
